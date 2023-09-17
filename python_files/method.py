@@ -6,7 +6,7 @@ SW_train = ["707014", "707015", "707016", "707017", "707018"]
 SE_train = ["707009", "707011", "707012", "707013", "707028"]
 list_status = ['Open', 'Close', 'Any']
 
-def prep_data():
+def prep_data(need_data):
     #Open pre prepared data file
     with open('data_dict.pickle', 'rb') as f:
         data_dict = pickle.load(f)
@@ -30,8 +30,9 @@ def prep_data():
                 door_dict[door] = df_test.drop(columns="level_0")
             door_dict_train[train] = door_dict
         door_dict_day[f"Day {i + 1}"] = door_dict_train
-
-    return door_dict_day
+    if need_data is False:
+        return door_dict_day
+    else: return data_dict
 
 def make_door_op_df(door_dict_day):
     series_day = {}
@@ -122,6 +123,19 @@ def make_door_time_average(time_day_dict, fleet):
             df_fleet["index"] = ["SouthWest", "SouthEast"]
             df_fleet_2 = df_fleet.rename(columns={"index":"Fleet"})
             time_fleet_dict[status] = df_fleet_2
-            return df_fleet_2
+    if fleet is True:
+        return time_fleet_dict
+    else: return time_df_dict
 
-        else: return df
+def make_average_btw_station(data_dict):
+    train_list = SW_train + SE_train
+    average_time_station = {}
+    for train in train_list:
+        mask = (data_dict[train]["Description Clean"] == "Beacon reader new ASDO data") | (data_dict[train]["Description Clean"] == "Standstill (v<0.2 km/h)") | (data_dict[train]["Description Clean"] =="Operation mode setpoint STATION - Door release is active")
+        df_test = data_dict[train][mask]
+        df_test["temp"] = df_test["Description Clean"].shift(1)
+        df_test["Station"] = (df_test["temp"] == "Beacon reader new ASDO data") & (df_test["Description Clean"] == "Standstill (v<0.2 km/h)")
+        df_test.drop(columns="temp", inplace = True)
+        time_mean = df_test[df_test["Station"]== True]["Time_between_station"] = (df_test[df_test["Station"]== True]["DateTime Clean"] - df_test[df_test["Station"]== True]["DateTime Clean"].shift(1)).dt.total_seconds()
+        average_time_station[train] = time_mean[time_mean<10000].mean()
+    return average_time_station
