@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import pickle
+from os import path
 
 SW_train = ["707014", "707015", "707016", "707017", "707018"]
 SE_train = ["707009", "707011", "707012", "707013", "707028"]
@@ -8,7 +9,7 @@ list_status = ['Open', 'Close', 'Any']
 
 def prep_data(file, need_data):
     #Open pre prepared data file
-    with open(file, 'rb') as f:
+    with open(file.name, 'rb') as f:
         data_dict = pickle.load(f)
 
     #Make list of doors name
@@ -20,7 +21,7 @@ def prep_data(file, need_data):
     for i in [0,1]:
         door_dict_train = {}
         for train, data in data_dict.items():
-            day = min(data["DateTime Clean"].dt.day)
+            day = max(data["DateTime Clean"].dt.day) - 1
             door_dict = {}
             for door in door_list:
                 data = data[data["DateTime Clean"].dt.day == day + i]
@@ -141,3 +142,9 @@ def make_average_btw_station(data_dict):
         time_mean = df_test[df_test["Station"]== True]["Time_between_station"] = (df_test[df_test["Station"]== True]["DateTime Clean"] - df_test[df_test["Station"]== True]["DateTime Clean"].shift(1)).dt.total_seconds()
         average_time_station[train] = time_mean[time_mean<10000].mean()
     return average_time_station
+
+def export_data(pathos, data):
+
+    file_path = path.join(["D:", "Test", data[1] + ".csv"])
+    data[0].to_csv(file_path)
+    return "Save successfully?"
