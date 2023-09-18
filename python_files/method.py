@@ -6,9 +6,9 @@ SW_train = ["707014", "707015", "707016", "707017", "707018"]
 SE_train = ["707009", "707011", "707012", "707013", "707028"]
 list_status = ['Open', 'Close', 'Any']
 
-def prep_data(need_data):
+def prep_data(file, need_data):
     #Open pre prepared data file
-    with open('data_dict.pickle', 'rb') as f:
+    with open(file, 'rb') as f:
         data_dict = pickle.load(f)
 
     #Make list of doors name
@@ -34,7 +34,7 @@ def prep_data(need_data):
         return door_dict_day
     else: return data_dict
 
-def make_door_op_df(door_dict_day):
+def make_door_op_df(door_op, door_dict_day):
     series_day = {}
     for day, door_dict_train in door_dict_day.items():
         list_series = []
@@ -49,6 +49,7 @@ def make_door_op_df(door_dict_day):
     df_dict = {}
     for day, series in series_day.items():
         df_fin = pd.DataFrame.from_dict(series)
+        df_fin = df_fin[["train_nb"] + door_op]
         df_fin["total"] = df_fin.sum(numeric_only = True, axis=1)
         df_dict[day] = df_fin
 
@@ -77,16 +78,16 @@ def make_door_time_df(door_dict_day):
         for train, door_dict in train_data.items():
             time_door_dict = {}
             for door, data in door_dict.items():
-                averge_open = data[(data["Status"] == 1) & (data["Time_diff (sec)"]<150)]["Time_diff (sec)"].mean()
-                avergae_close = data[data["Status"] == 0]["Time_diff (sec)"].mean()
+                average_open = data[(data["Status"] == 1) & (data["Time_diff (sec)"]<150)]["Time_diff (sec)"].mean()
+                average_close = data[data["Status"] == 0]["Time_diff (sec)"].mean()
                 average_door = data["Time_diff (sec)"].mean()
-                time_door_dict[door] = {"Open": averge_open, "Close": avergae_close, "Any": average_door}
+                time_door_dict[door] = {"Open": average_open, "Close": average_close, "Any": average_door}
             time_train_dict[train] = time_door_dict
         time_day_dict[day] = time_train_dict
 
     return time_day_dict
 
-def make_average_time_df(time_day_dict, status):
+def make_average_time_df(door_op, time_day_dict, status):
 
     series_time = {}
     for day, time_dict_train in time_day_dict.items():
@@ -102,19 +103,20 @@ def make_average_time_df(time_day_dict, status):
     df_time_dict = {}
     for day, series in series_time.items():
         df_fin = pd.DataFrame.from_dict(series)
+        df_fin = df_fin[["train_nb"] + door_op]
         df_fin["total"] = df_fin.mean(numeric_only = True, axis=1)
         df_time_dict[day] = df_fin
 
     df_ave_time = ((df_time_dict["Day 1"].select_dtypes("number") + df_time_dict["Day 2"].select_dtypes("number"))/2)
     df_ave_time.insert(loc=0, column='Train', value=df_time_dict["Day 2"]["train_nb"])
-    return df_ave_time
+    return df_time_dict, df_ave_time
 
-def make_door_time_average(time_day_dict, fleet):
-    time_df_dict = {}
+def make_door_time_average(door_op, time_day_dict, fleet):
+    time_df_dict_ave = {}
     time_fleet_dict = {}
     for status in list_status:
-        df = make_average_time_df(time_day_dict, status).round(decimals=1)
-        time_df_dict[status] = df
+        df = make_average_time_df(door_op, time_day_dict, status)[1].round(decimals=1)
+        time_df_dict_ave[status] = df
 
         if fleet is True:
             df_SW_time = df[df["Train"].isin(SW_train)].describe().loc[["mean"]].round(decimals=1)
@@ -125,7 +127,7 @@ def make_door_time_average(time_day_dict, fleet):
             time_fleet_dict[status] = df_fleet_2
     if fleet is True:
         return time_fleet_dict
-    else: return time_df_dict
+    else: return time_df_dict_ave
 
 def make_average_btw_station(data_dict):
     train_list = SW_train + SE_train
