@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import pickle
 from python_files.method import prep_data, make_door_op_df, make_door_time_average, make_door_time_df, make_op_df_average, make_average_btw_station, make_average_time_df, export_data
 
 #----------Data maker----------------------
@@ -16,7 +17,7 @@ st.title("Class 707 Doors operations")
 
 with st.sidebar:
     st.subheader("File uploader")
-    file = st.file_uploader("Select pickle file", type="pickle")
+    file = st.file_uploader("Select pickle file")
     st.markdown("""Note: In order to accurately portray door ***opening*** time, outliers have been removed. It was suposed that very long times between door operations were because of maintenance or parking.""")
     st.markdown("""Limitations: <ul>
                     <li>Will only be able to process 2 days (48 hours) of data.</li>
