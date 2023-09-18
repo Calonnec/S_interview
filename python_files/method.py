@@ -12,6 +12,11 @@ def prep_data(file, need_data):
     file.seek(0)
     data_bytes = file.read()
     data_dict = pickle.loads(data_bytes)
+<<<<<<< HEAD
+=======
+    with open(file, 'rb') as f:
+        data_dict = pickle.load(f)
+>>>>>>> 0d28c8bbb62043896ad463822136a480ef405e1f
 
     #Make list of doors name
     data_fil = data_dict[SW_train[0]]
