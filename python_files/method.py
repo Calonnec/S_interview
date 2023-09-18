@@ -9,14 +9,9 @@ list_status = ['Open', 'Close', 'Any']
 
 def prep_data(file, need_data):
     #Open pre prepared data file
-<<<<<<< HEAD
     file.seek(0)
     data_bytes = file.read()
     data_dict = pickle.loads(data_bytes)
-=======
-    with open(file, 'rb') as f:
-        data_dict = pickle.load(f)
->>>>>>> d7e1ee0d59868f12744fcb7270108e26617712d3
 
     #Make list of doors name
     data_fil = data_dict[SW_train[0]]
