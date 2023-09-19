@@ -141,7 +141,7 @@ if file is not None:
             elif option_three == "Driver Door":
                 st.dataframe(door_dict_drive[option_day], hide_index=True)
                 data_exp = [door_dict_pass[option_day], f"Door_op_{option_three}_{option_day}"]
-        #path = st.text_input("Path to save file")
-        #to_export = data_exp
-        #st.write(path + '\\' + to_export[1])
-        #st.button("Export data", on_click=export_data, args=(path, to_export))
+        path = st.text_input("Path to save file")
+        to_export = data_exp
+        st.write(path + '\\' + to_export[1])
+        st.button("Export data", on_click=export_data, args=(path, to_export))
