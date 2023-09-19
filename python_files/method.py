@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import pickle
 from os import path
+from functools import reduce
 
 SW_train = ["707014", "707015", "707016", "707017", "707018"]
 SE_train = ["707009", "707011", "707012", "707013", "707028"]
@@ -145,7 +146,7 @@ def make_average_btw_station(data_dict):
     return average_time_station
 
 def export_data(pathos, data):
-
-    file_path = path.join(["D:", "Test", data[1] + ".csv"])
+    path_l = (pathos + "\\" + data[1] + ".csv").split("\\")
+    path_l[0] += "\\"
+    file_path = reduce(path.join,path_l)
     data[0].to_csv(file_path)
-    return "Save successfully?"
