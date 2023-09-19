@@ -147,5 +147,6 @@ def make_average_btw_station(data_dict):
 
 def export_data(pathos, data):
     path_l = (pathos + "\\" + data[1] + ".csv").split("\\")
+    print(path_l)
     file_path = reduce(path.join,path_l)
     data[0].to_csv(file_path)
