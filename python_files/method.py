@@ -12,11 +12,6 @@ def prep_data(file, need_data):
     file.seek(0)
     data_bytes = file.read()
     data_dict = pickle.loads(data_bytes)
-<<<<<<< HEAD
-=======
-    with open(file, 'rb') as f:
-        data_dict = pickle.load(f)
->>>>>>> 0d28c8bbb62043896ad463822136a480ef405e1f
 
     #Make list of doors name
     data_fil = data_dict[SW_train[0]]
@@ -148,9 +143,3 @@ def make_average_btw_station(data_dict):
         time_mean = df_test[df_test["Station"]== True]["Time_between_station"] = (df_test[df_test["Station"]== True]["DateTime Clean"] - df_test[df_test["Station"]== True]["DateTime Clean"].shift(1)).dt.total_seconds()
         average_time_station[train] = time_mean[time_mean<10000].mean()
     return average_time_station
-
-def export_data(pathos, data):
-
-    file_path = path.join(["D:", "Test", data[1] + ".csv"])
-    data[0].to_csv(file_path)
-    return "Save successfully?"

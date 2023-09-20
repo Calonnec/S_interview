@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import pickle
-from python_files.method import prep_data, make_door_op_df, make_door_time_average, make_door_time_df, make_op_df_average, make_average_btw_station, make_average_time_df, export_data
+from python_files.method import prep_data, make_door_op_df, make_door_time_average, make_door_time_df, make_op_df_average, make_average_btw_station, make_average_time_df
 
 #----------Data maker----------------------
 SW_train = ["707014", "707015", "707016", "707017", "707018"]
@@ -141,7 +141,9 @@ if file is not None:
             elif option_three == "Driver Door":
                 st.dataframe(door_dict_drive[option_day], hide_index=True)
                 data_exp = [door_dict_pass[option_day], f"Door_op_{option_three}_{option_day}"]
-        #path = st.text_input("Path to save file")
-        #to_export = data_exp
-        #st.write(path + '\\' + to_export[1])
-        #st.button("Export data", on_click=export_data, args=(path, to_export))
+
+        @st.cache_data
+        def convert_df(df):
+            return df.to_csv().encode('utf-8')
+
+        st.download_button("Download current data", convert_df(data_exp[0]), data_exp[1]+".csv", "text/csv")
