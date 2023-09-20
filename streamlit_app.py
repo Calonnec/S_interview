@@ -18,10 +18,11 @@ st.title("Class 707 Doors operations")
 with st.sidebar:
     st.subheader("File uploader")
     file = st.file_uploader("Select pickle file")
-    st.markdown("""Note: In order to accurately portray door ***opening*** time, outliers have been removed. It was suposed that very long times between door operations were because of maintenance or parking.""")
+    st.markdown("""This is a just a concept and have limitations. It is only valid for the set of data given for the tasks.""")
     st.markdown("""Limitations: <ul>
                     <li>Will only be able to process 2 days (48 hours) of data.</li>
                     <li>Will only work with the train numbers provided.</li>
+                    <li>Requires data to be processed before submitting.</li>
                     </ul>""", unsafe_allow_html=True)
 
 if file is not None:
@@ -58,53 +59,69 @@ if file is not None:
     tab1, tab2 = st.tabs(["Fleet view", "Door View"])
     with tab1:
         cola, colb = st.columns(2)
-        cola.header("SouthWestern fleet")
-        colb.header("SouthEastern Fleet")
+        cola.header(":blue[**SouthWestern fleet**]")
+        colb.header(":blue[**SouthEastern Fleet**]")
         cola.divider()
         colb.divider()
-        cola.write("Door Operations counts (daily average)")
-        colb.write("Door Operations counts (daily average)")
+        cola.write(":blue[**Door Operations counts (daily average)**]")
+        colb.write(":blue[**Door Operations counts (daily average)**]")
         ca1 = cola.container()
         ca2 = colb.container()
         ca1col1, ca1col2 = ca1.columns(2)
-        ca1col1.metric("Passengers Doors | average", df_door_fleet["total"][0])
-        ca1col2.metric("Drivers Doors | average", df_door_fleet_driv["total"][0])
+        ca1col1.metric(":blue[Passengers Doors] | Train wide", df_door_fleet["total"][0])
+        ca1col2.metric(":blue[Drivers Doors] | Train wide", df_door_fleet_driv["total"][0])
         with ca1col1.expander("Results per trains"):
                 st.dataframe(df_door_train[df_door_train["Train"].isin(SW_train)][["Train", "total"]], hide_index=True)
         with ca1col2.expander("Results per trains"):
                 st.dataframe(df_door_train_driv[df_door_train_driv["Train"].isin(SW_train)][["Train", "total"]], hide_index=True)
 
+        ca1col1.metric(":blue[Passengers Doors] | Per door", (df_door_fleet["total"][0]/20).round(1))
+        ca1col2.metric(":blue[Drivers Doors] | Per door", (df_door_fleet_driv["total"][0]/4).round(1))
+        with ca1col1.expander("Results per trains"):
+                df_door_train["total per"] = df_door_train["total"]/20
+                st.dataframe(df_door_train[df_door_train["Train"].isin(SW_train)][["Train", "total per"]], hide_index=True)
+        with ca1col2.expander("Results per trains"):
+                df_door_train_driv["total per"] = df_door_train_driv["total"]/4
+                st.dataframe(df_door_train_driv[df_door_train_driv["Train"].isin(SW_train)][["Train", "total per"]], hide_index=True)
+
         ca2col1, ca2col2 = ca2.columns(2)
-        ca2col1.metric("Passengers Doors | average", df_door_fleet["total"][1])
-        ca2col2.metric("Drivers Doors | average", df_door_fleet_driv["total"][1])
+        ca2col1.metric(":blue[Passengers Doors] | Trainwide", df_door_fleet["total"][1])
+        ca2col2.metric(":blue[Drivers Doors] | Train wide", df_door_fleet_driv["total"][1])
         with ca2col1.expander("Results per trains"):
                 st.dataframe(df_door_train[df_door_train["Train"].isin(SE_train)][["Train", "total"]], hide_index=True)
         with ca2col2.expander("Results per trains"):
                 st.dataframe(df_door_train_driv[df_door_train_driv["Train"].isin(SE_train)][["Train", "total"]], hide_index=True)
 
+        ca2col1.metric(":blue[Passengers Doors] | Per door", (df_door_fleet["total"][1]/20).round(1))
+        ca2col2.metric(":blue[Drivers Doors] | Per door", (df_door_fleet_driv["total"][1]/4).round(1))
+        with ca2col1.expander("Results per trains"):
+                st.dataframe(df_door_train[df_door_train["Train"].isin(SE_train)][["Train", "total per"]], hide_index=True)
+        with ca2col2.expander("Results per trains"):
+                st.dataframe(df_door_train_driv[df_door_train_driv["Train"].isin(SE_train)][["Train", "total per"]], hide_index=True)
+
         cola.divider()
         colb.divider()
-        cola.write("Time between passenger doors Operations")
-        colb.write("Time between passenger doors Operations")
+        cola.write(":blue[**Time between passenger doors Operations**]")
+        colb.write(":blue[**Time between passenger doors Operations**]")
         cola.divider()
         colb.divider()
 
-        cola.metric("Average time between any passenger doors operations", f'{df_door_time_fleet["Any"]["total"][0]} s',)
-        colb.metric("Average time between any passenger doors operations", f'{df_door_time_fleet["Any"]["total"][1]} s')
+        cola.metric(":blue[Average time between **any** passenger doors operations]", f'{df_door_time_fleet["Any"]["total"][0]} s',)
+        colb.metric(":blue[Average time between **any** passenger doors operations]", f'{df_door_time_fleet["Any"]["total"][1]} s')
         with cola.expander("See for results per trains"):
                 st.dataframe(df_door_time_train["Any"][df_door_time_train["Any"]["Train"].isin(SW_train)][["Train", "total"]], hide_index=True)
         with colb.expander("See for results per trains"):
                 st.dataframe(df_door_time_train["Any"][df_door_time_train["Any"]["Train"].isin(SE_train)][["Train", "total"]], hide_index=True)
 
-        cola.metric("Average time doors stayed open (daily average)", f'{df_door_time_fleet["Open"]["total"][0]} s')
-        colb.metric("Average time doors stayed open (daily average)", f'{df_door_time_fleet["Open"]["total"][1]} s')
+        cola.metric(":blue[Average time doors stayed **open** (daily average)]", f'{df_door_time_fleet["Open"]["total"][0]} s')
+        colb.metric(":blue[Average time doors stayed **open** (daily average)]", f'{df_door_time_fleet["Open"]["total"][1]} s')
         with cola.expander("See for results per trains"):
                 st.dataframe(df_door_time_train["Open"][df_door_time_train["Open"]["Train"].isin(SW_train)][["Train", "total"]], hide_index=True)
         with colb.expander("See for results per trains"):
                 st.dataframe(df_door_time_train["Open"][df_door_time_train["Open"]["Train"].isin(SE_train)][["Train", "total"]], hide_index=True)
 
-        cola.metric("Average time doors stay closed (daily average)", f'{df_door_time_fleet["Close"]["total"][0]} s')
-        colb.metric("Average time doors stay closed (daily average)", f'{df_door_time_fleet["Close"]["total"][1]} s')
+        cola.metric(":blue[Average time doors stay **closed** (daily average)]", f'{df_door_time_fleet["Close"]["total"][0]} s')
+        colb.metric(":blue[Average time doors stay **closed** (daily average)]", f'{df_door_time_fleet["Close"]["total"][1]} s')
         with cola.expander("See for results per trains"):
                 st.dataframe(df_door_time_train["Close"][df_door_time_train["Close"]["Train"].isin(SW_train)][["Train", "total"]], hide_index=True)
         with colb.expander("See for results per trains"):
@@ -112,15 +129,15 @@ if file is not None:
 
         cola.divider()
         colb.divider()
-        cola.write("Estimated time between stations")
-        colb.write("Estimated time between stations")
+        cola.write(":blue[**Estimated time between stations**]")
+        colb.write(":blue[**Estimated time between stations**]")
         cola.divider()
         colb.divider()
 
-        cola.metric("Average time between stations", df_station.T[df_station.T.index.isin(SW_train)].mean().round(1))
+        cola.metric(":blue[Average time between stations]", df_station.T[df_station.T.index.isin(SW_train)].mean().round(1))
         with cola.expander("See for results per trains"):
                 st.dataframe(df_station.T[df_station.T.index.isin(SW_train)].round(1).rename(columns={0:"Time"}))
-        colb.metric("Average time between stations", df_station.T[df_station.T.index.isin(SE_train)].mean().round(1))
+        colb.metric(":blue[Average time between stations]", df_station.T[df_station.T.index.isin(SE_train)].mean().round(1))
         with colb.expander("See for results per trains"):
                 st.dataframe(df_station.T[df_station.T.index.isin(SE_train)].round(1).rename(columns={0:"Time"}))
 
