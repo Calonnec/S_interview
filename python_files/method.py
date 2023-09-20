@@ -144,11 +144,3 @@ def make_average_btw_station(data_dict):
         time_mean = df_test[df_test["Station"]== True]["Time_between_station"] = (df_test[df_test["Station"]== True]["DateTime Clean"] - df_test[df_test["Station"]== True]["DateTime Clean"].shift(1)).dt.total_seconds()
         average_time_station[train] = time_mean[time_mean<10000].mean()
     return average_time_station
-
-def export_data(pathos, data):
-    #path_l = (pathos + "\\" + data[1] + ".csv").split("\\")
-    print("----------------------------")
-    #print(path_l)
-    print("----------------------------")
-    #file_path = reduce(path.join,path_l)
-    data.to_csv(pathos)
