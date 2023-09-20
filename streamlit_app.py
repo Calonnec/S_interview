@@ -145,4 +145,4 @@ if file is not None:
         to_export = data_exp
         pathos = rf"{path}\{to_export[1]}.csv"
         st.write(pathos)
-        st.button("Export data", on_click=export_data, args=(pathos))
+        st.button("Export data", on_click=export_data, args=(pathos,))
