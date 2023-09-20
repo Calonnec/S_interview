@@ -119,6 +119,8 @@ if file is not None:
                 st.dataframe(df_door_time_train["Open"][df_door_time_train["Open"]["Train"].isin(SW_train)][["Train", "total"]], hide_index=True)
         with colb.expander("See for results per trains"):
                 st.dataframe(df_door_time_train["Open"][df_door_time_train["Open"]["Train"].isin(SE_train)][["Train", "total"]], hide_index=True)
+        cola.caption("Door opening time above 150s were classified as outliers")
+        colb.caption("Door opening time above 150s were classified as outliers")
 
         cola.metric(":blue[Average time doors stay **closed** (daily average)]", f'{df_door_time_fleet["Close"]["total"][0]} s')
         colb.metric(":blue[Average time doors stay **closed** (daily average)]", f'{df_door_time_fleet["Close"]["total"][1]} s')
