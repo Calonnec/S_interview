@@ -143,6 +143,6 @@ if file is not None:
                 data_exp = [door_dict_pass[option_day], f"Door_op_{option_three}_{option_day}"]
         path = st.text_input("Path to save file")
         to_export = data_exp
-        pathos = rf"{path} + \ + {to_export[1]}"
+        pathos = rf"{path} + \ + {to_export[1]} + .csv"
         st.write(pathos)
         st.button("Export data", on_click=export_data, args=(pathos))
