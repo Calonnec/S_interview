@@ -145,10 +145,10 @@ def make_average_btw_station(data_dict):
         average_time_station[train] = time_mean[time_mean<10000].mean()
     return average_time_station
 
-def export_data(pathos):
+def export_data(pathos, data):
     #path_l = (pathos + "\\" + data[1] + ".csv").split("\\")
     print("----------------------------")
     #print(path_l)
     print("----------------------------")
     #file_path = reduce(path.join,path_l)
-    data[0].to_csv(pathos)
+    data.to_csv(pathos)
