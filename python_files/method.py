@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import pickle
 from os import path
+from functools import reduce
 
 SW_train = ["707014", "707015", "707016", "707017", "707018"]
 SE_train = ["707009", "707011", "707012", "707013", "707028"]
